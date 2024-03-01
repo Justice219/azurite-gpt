@@ -1,0 +1,24 @@
+[
+    {
+        "name": "node1",
+        "description": "This is node 1",
+        "connections": {
+            "north": "node2",
+            "south": "node3"
+        }
+    },
+    {
+        "name": "node2",
+        "description": "This is node 2",
+        "connections": {
+            "south": "node1"
+        }
+    },
+    {
+        "name": "node3",
+        "description": "This is node 3",
+        "connections": {
+             "north": "node1"
+         }
+     }
+]

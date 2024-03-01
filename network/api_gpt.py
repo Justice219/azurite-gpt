@@ -2,6 +2,7 @@ import os
 import openai
 import asyncio
 
+# load environment variables
 class GPT:
     def __init__(self):
         self.api_key = os.getenv("OPENAI_API_KEY")
@@ -71,7 +72,7 @@ class GPT:
                 print("Run Failed: " + run.last_error.message)
                 return message
             
-            await asyncio.sleep(.5)
+            await asyncio.sleep(1)
             await self.run_assistant_check(run_id, name)
         
 
@@ -85,7 +86,7 @@ class GPT:
 
     # COMPLETION API
     async def create_completion(self, model, messages):
-        response = self.client.Completion.create(
+        response = self.client.chat.completions.create(
             model = model,
             messages = messages
         )
@@ -97,19 +98,21 @@ class GPT:
 
 async def test_gpt():
     gpt = GPT()
-    await gpt.create_assistant(name="Azurite", description='''
-        You are Azurite, a narrator for a text adventure game.
-        You will be guiding the user through a procedurally generated story.
-        Start in a tavern, and guide the user through the story.
-                         ''')
-    await gpt.create_assistant_message(assistant="Azurite", message="I want to create a text adventure where I am in a tavern!", role="user")
-    await gpt.create_assistant_message(assistant="Azurite", message="I will look around the tavern!", role="user")
+    response, message = await gpt.create_completion(
+        "gpt-3.5-turbo",
+        [
+            {
+                "role": "system",
+                "content": "You are a helpful assistant."
+            },
+            {
+                "role": "user",
+                "content": "What is your name?"
+            }
+        ]
+    )
+    print(message)
 
-    run_id = await gpt.run_assistant_thread(assistant="Azurite")
-    message = await gpt.run_assistant_check(run_id, "Azurite")
-
-    print("message: ", message)
-        
 
 
 asyncio.run(test_gpt())
